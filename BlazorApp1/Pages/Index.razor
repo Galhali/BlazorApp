@@ -1,0 +1,134 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp1.Data
+@inject IDbContextFactory<StudentDbContext> StudentDbContextFactory;
+
+<PageTitle>Studenci</PageTitle>
+
+@if (ShowCreate)
+{  
+
+    <h3>Dodaj nowego studenta</h3>
+    <div class="row">
+        <label for="imie" class="col-4 col-form-label">Imię</label>
+        <div class="col-8">
+            <input id="imie" name="imie" type="text" class="form-control" @bind="@NewStudent.Imie" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="nazwisko" class="col-4 col-form-label">Nazwisko</label>
+        <div class="col-8">
+            <input id="nazwisko" name="nazwisko" type="text" class="form-control" @bind="@NewStudent.Nazwisko" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="email" class="col-4 col-form-label">Email</label>
+        <div class="col-8">
+            <input id="email" name="email" type="email" class="form-control" @bind="@NewStudent.Email" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="semestr" class="col-4 col-form-label">Semestr</label>
+        <div class="col-8">
+            <input id="semestr" name="semestr" type="number" class="form-control" @bind="@NewStudent.Semestr" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="wiek" class="col-4 col-form-label">Wiek</label>
+        <div class="col-8">
+            <input id="wiek" name="wiek" type="number" class="form-control" @bind="@NewStudent.Wiek" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="avatar" class="col-4 col-form-label">Avatar</label>
+        <div class="col-8">
+            <input id="avatar" name="avatar" type="text" class="form-control" @bind="@NewStudent.Avatar" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset-4 col-8">
+            <button name="button" type="submit" class="btn btn-primary" @onclick="CreateNewStudentAsync">Wyślij</button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="offset-4 col-8">
+            <button name="submit" type="submit" class="btn btn-primary" @onclick="ShowCreatForm">Dodaj nowego studenta</button>
+        </div>
+    </div>
+
+    <p>Lista studentów</p>
+
+    if (Students != null && Students.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered table-light border-dar">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Imię</th>
+                        <th scope="col">Nazwisko</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Semestr</th>
+                        <th scope="col">Wiek</th>
+                        <th scope="col">Avatar</th>
+                        <th scope="col">Edytuj</th>
+                        <th scope="col">Usuń</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var student in Students)
+                    {
+                        if (!@ShowEdit)
+                        {
+                            <tr>
+                                <td>@student.Id</td>
+                                <td>@student.Imie</td>
+                                <td>@student.Nazwisko</td>
+                                <td>@student.Email</td>
+                                <td>@student.Semestr</td>
+                                <td>@student.Wiek</td>
+                                <td><img src="@student.Avatar" width="50" height="50" /></td>
+                                <td><button name="button" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(student)">Edytuj</button></td>
+                                <td><button name="button" type="submit" class="btn btn-danger" @onclick="() => DeleteStudent(student.Id)">Usuń</button></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            if (StudentToUpdate != null && StudentToUpdate.Id == student.Id)
+                            {
+                                <tr>
+                                    <td>@StudentToUpdate.Id</td>
+                                    <td><input id="imie" name="imie" type="text" class="form-control" @bind=@StudentToUpdate.Imie /></td>
+                                    <td><input id="nazwisko" name="nazwisko" type="text" class="form-control" @bind=@StudentToUpdate.Nazwisko /></td>
+                                    <td><input id="email" name="email" type="email" class="form-control" @bind=@StudentToUpdate.Email /></td>
+                                    <td><input id="semestr" name="semestr" type="number" class="form-control" @bind=@StudentToUpdate.Semestr /></td>
+                                    <td><input id="wiek" name="wiek" type="number" class="form-control" @bind=@StudentToUpdate.Wiek /></td>
+                                    <td><input id="avatar" name="avatar" type="text" class="form-control" @bind=@StudentToUpdate.Avatar /></td>
+                                    <td><button name="button" type="submit" class="btn btn-success" @onclick="() => UpdateStudent()">Zapisz</button></td>
+                                    <td></td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@student.Id</td>
+                                    <td>@student.Imie</td>
+                                    <td>@student.Nazwisko</td>
+                                    <td>@student.Email</td>
+                                    <td>@student.Semestr</td>
+                                    <td>@student.Wiek</td>
+                                    <td><img src="@student.Avatar" width="50" height="50" /></td>
+                                    <td><button name="button" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(student)">Edytuj</button></td>
+                                    <td></td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
